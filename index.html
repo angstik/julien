@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bon anniversaire Julien</title>
+<meta name="description" content="Une explosion de lettres et un poème pour les 26 ans de Julien.">
+<meta property="og:title" content="Bon anniversaire Julien">
+<meta property="og:description" content="26 lettres, 26 ans, un poème.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>%F0%9F%8E%89</text></svg>">
+<style>
+  :root{
+    --nuit:      #14071F;
+    --creme:     #FFF4E6;
+    --rose:      #FF3E6C;
+    --jaune:     #FFC53D;
+    --menthe:    #2EE6A8;
+    --ciel:      #4CC9F0;
+    --violet:    #C77DFF;
+
+    /* polices strictement locales : aucune requête réseau */
+    --display: "Avenir Next", "Trebuchet MS", "Gill Sans", "Segoe UI", system-ui, sans-serif;
+    --serif:   "Iowan Old Style", Georgia, "Palatino Linotype", Palatino, "Times New Roman", serif;
+    --mono:    ui-monospace, "SF Mono", "SFMono-Regular", Menlo, Consolas, "DejaVu Sans Mono", monospace;
+  }
+
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+
+  body{
+    margin:0;
+    background:var(--nuit);
+    color:var(--creme);
+    font-family:var(--serif);
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---------- fond : des halos qui respirent ---------- */
+  .halos{ position:fixed; inset:0; z-index:0; pointer-events:none; }
+  .halo{
+    position:absolute; border-radius:50%; filter:blur(70px); opacity:.55;
+    animation:derive 18s ease-in-out infinite alternate;
+  }
+  .halo.a{ width:70vmax; height:70vmax; top:-28vmax; left:-14vmax;
+    background:radial-gradient(circle, rgba(199,125,255,.85), rgba(199,125,255,0) 65%); }
+  .halo.b{ width:60vmax; height:60vmax; bottom:-24vmax; right:-16vmax;
+    background:radial-gradient(circle, rgba(255,62,108,.7), rgba(255,62,108,0) 65%);
+    animation-duration:23s; animation-direction:alternate-reverse; }
+  .halo.c{ width:44vmax; height:44vmax; top:38%; left:52%;
+    background:radial-gradient(circle, rgba(76,201,240,.45), rgba(76,201,240,0) 65%);
+    animation-duration:29s; }
+  @keyframes derive{ from{ transform:translate3d(0,0,0) scale(1); } to{ transform:translate3d(4vw,-3vh,0) scale(1.14); } }
+
+  #confettis{ position:fixed; inset:0; z-index:5; pointer-events:none; }
+
+  /* ---------- héros ---------- */
+  .scene{ position:relative; z-index:2; }
+
+  .hero{
+    min-height:100svh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center;
+    padding:clamp(32px,7vw,72px) clamp(18px,5vw,48px);
+  }
+
+  .eyebrow{
+    font-family:var(--mono); font-size:clamp(11px,1.4vw,14px);
+    letter-spacing:.42em; text-transform:uppercase;
+    color:var(--menthe); margin:0 0 clamp(18px,3vh,30px);
+    opacity:0; animation:monte .8s .1s cubic-bezier(.2,.9,.25,1) forwards;
+  }
+
+  .titre{
+    font-family:var(--display); font-weight:800;
+    margin:0; line-height:.94; letter-spacing:-.015em;
+    font-size:clamp(46px,13vw,170px);
+  }
+  .titre .ligne{ display:block; }
+  .titre .ligne.petite{
+    font-size:.5em; font-weight:700; letter-spacing:.04em;
+    color:var(--jaune); margin-bottom:.35em;
+  }
+  .titre .l{
+    display:inline-block;
+    opacity:0; transform:translateY(.5em) rotate(var(--r,0deg)) scale(.7);
+    animation:eclot .62s cubic-bezier(.18,1.5,.35,1) forwards;
+    animation-delay:var(--d,0s);
+  }
+  @keyframes eclot{ to{ opacity:1; transform:translateY(0) rotate(0) scale(1); } }
+  @keyframes monte{ from{ opacity:0; transform:translateY(14px); } to{ opacity:1; transform:none; } }
+
+  /* ---------- le cœur ---------- */
+  .coeur{
+    display:block; margin:clamp(16px,3vh,30px) auto 0;
+    width:clamp(58px,11vw,132px); height:auto;
+    color:var(--rose);
+    filter:drop-shadow(0 0 26px rgba(255,62,108,.6));
+    opacity:0; transform:scale(.2);
+    animation:arrive .7s 1.7s cubic-bezier(.18,1.6,.35,1) forwards, bat 1.5s 2.5s ease-in-out infinite;
+  }
+  @keyframes arrive{ to{ opacity:1; transform:scale(1); } }
+  @keyframes bat{
+    0%,100%{ transform:scale(1); }
+    14%{ transform:scale(1.16); }
+    28%{ transform:scale(1); }
+    42%{ transform:scale(1.1); }
+    56%{ transform:scale(1); }
+  }
+  .coeur-petit{
+    display:inline-block; width:.9em; height:.9em; vertical-align:-.06em;
+    color:var(--rose); margin-left:.15em;
+    filter:drop-shadow(0 0 14px rgba(255,62,108,.55));
+    animation:bat 1.5s ease-in-out infinite;
+  }
+
+  /* ---------- l'alphabet ---------- */
+  .alphabet{
+    margin:clamp(30px,6vh,56px) auto 0;
+    max-width:min(760px,92vw);
+    display:flex; flex-wrap:wrap; justify-content:center; gap:clamp(5px,1.2vw,12px);
+  }
+  .alphabet span{
+    font-family:var(--mono); font-weight:700;
+    font-size:clamp(12px,2.2vw,20px);
+    color:rgba(255,244,230,.26);
+    transition:color .45s ease, text-shadow .45s ease, transform .45s cubic-bezier(.2,1.6,.4,1);
+  }
+  .alphabet span.on{
+    color:var(--jaune);
+    text-shadow:0 0 22px rgba(255,197,61,.75);
+    transform:translateY(-3px) scale(1.28);
+  }
+  .legende{
+    font-family:var(--mono); font-size:clamp(10px,1.3vw,12.5px);
+    letter-spacing:.16em; text-transform:uppercase;
+    color:rgba(255,244,230,.46);
+    margin:clamp(16px,2.6vh,24px) 0 0;
+    opacity:0; animation:monte .9s 3.1s ease forwards;
+  }
+
+  /* ---------- poème ---------- */
+  .poeme{
+    --col:clamp(86px,15vw,170px);
+    --gout:clamp(20px,3vw,34px);
+    position:relative;
+    max-width:min(900px,92vw);
+    margin:0 auto;
+    padding:clamp(70px,14vh,150px) 0 clamp(90px,16vh,180px);
+  }
+  .poeme::before{
+    content:""; position:absolute; top:0; bottom:clamp(70px,12vh,140px);
+    left:var(--col); width:1px;
+    background:linear-gradient(180deg, transparent, rgba(255,197,61,.55) 12%, rgba(255,62,108,.55) 88%, transparent);
+  }
+
+  .poeme-titre{
+    font-family:var(--display); font-weight:700;
+    font-size:clamp(20px,3.4vw,30px);
+    letter-spacing:.01em; margin:0 0 clamp(46px,8vh,86px);
+    padding-left:calc(var(--col) + var(--gout));
+  }
+  .poeme-titre em{ font-style:normal; color:var(--menthe); }
+
+  .strophe{
+    display:grid;
+    grid-template-columns:var(--col) 1fr;
+    margin-bottom:clamp(48px,8vh,88px);
+    opacity:0; transform:translateY(26px);
+    transition:opacity .9s ease, transform .9s cubic-bezier(.2,.8,.3,1);
+  }
+  .strophe.vu{ opacity:1; transform:none; }
+
+  .marque{ position:relative; padding-top:.35em; text-align:right; padding-right:22px; }
+  .marque b{
+    display:block; font-family:var(--mono); font-weight:700;
+    font-size:clamp(12px,1.7vw,15px); letter-spacing:.02em;
+    color:var(--c, var(--jaune));
+  }
+  .marque i{
+    display:block; font-style:normal; font-family:var(--mono);
+    font-size:clamp(9.5px,1.15vw,11px); line-height:1.5;
+    letter-spacing:.05em; text-transform:uppercase;
+    color:rgba(255,244,230,.4); margin-top:8px;
+  }
+  .marque::before{
+    content:""; position:absolute; left:var(--col);
+    top:.75em; width:9px; height:9px; margin-left:-4px; border-radius:50%;
+    background:var(--c, var(--jaune)); box-shadow:0 0 18px var(--c, var(--jaune));
+  }
+
+  .bloc{ padding-left:var(--gout); }
+  .vers{
+    margin:0; font-size:clamp(19px,2.9vw,29px); line-height:1.6;
+    font-weight:400; letter-spacing:.005em; max-width:24em;
+  }
+  .vers span{ display:block; }
+
+  /* ---------- envoi ---------- */
+  .envoi{
+    padding-left:calc(var(--col) + var(--gout));
+    opacity:0; transform:translateY(26px);
+    transition:opacity .9s ease, transform .9s cubic-bezier(.2,.8,.3,1);
+  }
+  .envoi.vu{ opacity:1; transform:none; }
+  .envoi p{
+    font-family:var(--serif); font-size:clamp(19px,2.9vw,29px); line-height:1.6;
+    color:var(--creme); margin:0 0 clamp(30px,5vh,46px); max-width:24em;
+  }
+  .signature{
+    font-family:var(--display); font-weight:800; font-style:normal !important;
+    font-size:clamp(23px,4.4vw,44px); line-height:1.2; margin:0 0 40px !important;
+    color:var(--creme) !important;
+  }
+
+  .relance{
+    font-family:var(--mono); font-size:13px; font-weight:700;
+    letter-spacing:.16em; text-transform:uppercase;
+    color:var(--nuit); background:var(--jaune);
+    border:0; border-radius:999px; padding:15px 28px; cursor:pointer;
+    transition:transform .2s cubic-bezier(.2,1.6,.4,1), background .2s ease, box-shadow .2s ease;
+  }
+  .relance:hover{ transform:translateY(-3px) scale(1.03); background:var(--rose); color:var(--creme); box-shadow:0 10px 34px rgba(255,62,108,.4); }
+  .relance:focus-visible{ outline:3px solid var(--menthe); outline-offset:4px; }
+
+  @media (max-width:620px){
+    .poeme::before{ left:18px; }
+    .strophe{ grid-template-columns:1fr; gap:14px; }
+    .marque{ padding:0 0 0 34px; text-align:left; }
+    .marque::before{ left:18px; margin-left:-4px; top:.35em; }
+    .marque i{ display:inline; margin-left:10px; }
+    .bloc{ padding-left:34px; }
+    .poeme-titre, .envoi{ padding-left:34px; }
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    html{ scroll-behavior:auto; }
+    *, *::before, *::after{ animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
+    .titre .l, .eyebrow, .legende, .coeur{ opacity:1; transform:none; }
+    .strophe, .envoi{ opacity:1; transform:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="halos" aria-hidden="true">
+  <div class="halo a"></div>
+  <div class="halo b"></div>
+  <div class="halo c"></div>
+</div>
+
+<canvas id="confettis" aria-hidden="true"></canvas>
+
+<main class="scene">
+
+  <!-- ========== HÉROS ========== -->
+  <section class="hero">
+    <p class="eyebrow">26 ans — jour 1</p>
+
+    <h1 class="titre">
+      <span class="ligne petite" data-anim>bon anniversaire</span>
+      <span class="ligne" data-anim>Julien</span>
+      <svg class="coeur" viewBox="0 0 32 29" role="img" aria-label="cœur" focusable="false">
+        <path fill="currentColor" d="M16 28.5 3.6 16.4C.4 13.2.2 8 3.2 4.9a8 8 0 0 1 11.5 0l1.3 1.3 1.3-1.3a8 8 0 0 1 11.5 0c3 3.1 2.8 8.3-.4 11.5L16 28.5Z"/>
+      </svg>
+    </h1>
+
+    <div class="alphabet" id="alphabet" aria-hidden="true"></div>
+    <p class="legende">26 lettres dans l'alphabet — 6 suffisent pour toi</p>
+
+  </section>
+
+  <!-- ========== POÈME ========== -->
+  <section class="poeme" id="poeme">
+    <h2 class="poeme-titre">Six éclats autour du <em>vingt-six</em></h2>
+
+    <div class="strophe" style="--c:var(--jaune)">
+      <div class="marque"><b>A &#8594; Z</b><i>les lettres de l'alphabet latin</i></div>
+      <div class="bloc">
+        <p class="vers">
+          <span>Vingt-six lettres, pas une de plus,</span>
+          <span>pour écrire la mer, la joie, l'issue.</span>
+          <span>Six ont suffi pour dire Julien :</span>
+        </p>
+        <p class="vers">toutes les autres complètent : tu as posé ton chemin et il est super, tout est complet maintenant pour tracer ta route !!</p>
+      </div>
+    </div>
+
+    <div class="strophe" style="--c:var(--rose)">
+      <div class="marque"><b>Fe &#183; 26</b><i>le numéro atomique du fer</i></div>
+      <div class="bloc">
+        <p class="vers">
+          <span>Vingt-six, c'est le chiffre du fer,</span>
+          <span>forgé au ventre des étoiles claires ;</span>
+          <span>la dernière chose qu'un soleil sait faire</span>
+          <span>avant de rendre toute sa lumière.</span>
+        </p>
+        <p class="vers">Le fer c'est fiable, on en fait des structures qui tiennent mais aussi des œuvres d'art, le tout c'est d'en prendre soin et de bien l'entretenir !</p>
+      </div>
+    </div>
+
+    <div class="strophe" style="--c:var(--menthe)">
+      <div class="marque"><b>26 os</b><i>ce que contient un seul pied</i></div>
+      <div class="bloc">
+        <p class="vers">
+          <span>Vingt-six os dans le creux d'un pied :</span>
+          <span>une charpente, un grand projet.</span>
+          <span>Juste ce qu'il faut, à bien y voir,</span>
+          <span>pour partir tôt, rentrer tard et faire plein de belles choses :</span>
+        </p>
+        <p class="vers">fais de ces premiers 26 ans un socle sur lequel tu pourras t'appuyer toute une vie !</p>
+      </div>
+    </div>
+
+    <div class="strophe" style="--c:var(--ciel)">
+      <div class="marque"><b>26,2 mi</b><i>la longueur d'un marathon</i></div>
+      <div class="bloc">
+        <p class="vers">
+          <span>Vingt-six milles font un marathon,</span>
+          <span>et nul n'en vient à bout d'un bond :</span>
+          <span>un pas, un souffle, un pas encore —</span>
+          <span>la ligne cède à qui l'ignore.</span>
+        </p>
+        <p class="vers">Un marathon c'est long, mais c'est aussi plein de surprises : tu as réussi le premier marathon de ta vie. Mais celui de ta vie est à peine entamé : va de l'avant, ignore les lignes qui limitent, accompagne ceux qui courent avec toi, VIS !</p>
+      </div>
+    </div>
+
+    <div class="strophe" style="--c:var(--violet)">
+      <div class="marque"><b>26 &#215; 2</b><i>les semaines d'une année entière</i></div>
+      <div class="bloc">
+        <p class="vers">
+          <span>Deux fois vingt-six, et voilà l'an :</span>
+          <span>cinquante-deux semaines devant.</span>
+        </p>
+        <p class="vers">26 c'est la moitié d'une année, c'est le quart d'une vie, c'est un âge où tout est possible avec les moyens que tu t'es donnés. Construis la suite avec confiance et dans la joie !</p>
+      </div>
+    </div>
+
+    <div class="strophe" style="--c:var(--jaune)">
+      <div class="marque"><b>25 &#183; 27</b><i>le carré et le cube qui l'encadrent</i></div>
+      <div class="bloc">
+        <p class="vers">
+          <span>Entre un carré et puis un cube,</span>
+          <span>vingt-six se glisse, et rien ne bouge :</span>
+          <span>seul nombre au monde à tenir</span>
+          <span>cette place-là. Comme toi, Julien.</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="envoi" id="envoi">
+      <p>Vingt-six lettres ont écrit tout ça. Aujourd'hui commence la vingt-septième :
+         celle qui n'existe dans aucun alphabet, et que tu écriras toi-même.</p>
+      <p class="signature">Bon anniversaire mon Julien 😘
+        <svg class="coeur-petit" viewBox="0 0 32 29" role="img" aria-label="cœur" focusable="false">
+          <path fill="currentColor" d="M16 28.5 3.6 16.4C.4 13.2.2 8 3.2 4.9a8 8 0 0 1 11.5 0l1.3 1.3 1.3-1.3a8 8 0 0 1 11.5 0c3 3.1 2.8 8.3-.4 11.5L16 28.5Z"/>
+        </svg>
+      </p>
+      <button class="relance" id="relance" type="button">Relancer l'explosion</button>
+    </div>
+  </section>
+
+</main>
+
+<script>
+(function(){
+  "use strict";
+
+  var doux = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var PALETTE = ["#FF3E6C","#FFC53D","#2EE6A8","#4CC9F0","#C77DFF","#FFF4E6"];
+  var MOT = "JULIEN";
+  var POLICE_MONO = "ui-monospace, Menlo, Consolas, monospace";
+
+  /* ================= 1. le titre éclot lettre par lettre ================= */
+  var retard = 0.25;
+  Array.prototype.forEach.call(document.querySelectorAll("[data-anim]"), function(ligne){
+    var texte = ligne.textContent.trim();
+    ligne.textContent = "";
+    Array.prototype.forEach.call(texte, function(c){
+      var s = document.createElement("span");
+      s.className = "l";
+      s.textContent = (c === " ") ? "\u00A0" : c;
+      s.style.setProperty("--d", retard.toFixed(2) + "s");
+      s.style.setProperty("--r", ((Math.random() * 16) - 8).toFixed(1) + "deg");
+      ligne.appendChild(s);
+      retard += 0.055;
+    });
+    retard += 0.12;
+  });
+
+  /* ================= 2. l'alphabet, et les six lettres qui s'allument ================= */
+  var bac = document.getElementById("alphabet");
+  var cases = [];
+  for (var i = 0; i < 26; i++){
+    var sp = document.createElement("span");
+    sp.textContent = String.fromCharCode(65 + i);
+    bac.appendChild(sp);
+    cases.push(sp);
+  }
+  function allume(){
+    Array.prototype.forEach.call(MOT, function(lettre, k){
+      var index = lettre.charCodeAt(0) - 65;
+      setTimeout(function(){
+        cases[index].classList.add("on");
+        if (!doux){ etincelle(cases[index]); }
+      }, 2300 + k * 190);
+    });
+  }
+
+  /* ================= 3. l'explosion : les 26 lettres qui volent ================= */
+  var canvas = document.getElementById("confettis");
+  var ctx = canvas.getContext("2d");
+  var particules = [];
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
+  var L = 0, H = 0;
+
+  function dimensionne(){
+    L = window.innerWidth; H = window.innerHeight;
+    canvas.width = L * dpr; canvas.height = H * dpr;
+    canvas.style.width = L + "px"; canvas.style.height = H + "px";
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  dimensionne();
+  window.addEventListener("resize", dimensionne);
+
+  function particule(x, y, force){
+    var angle = Math.random() * Math.PI * 2;
+    var vitesse = (Math.random() * 0.75 + 0.35) * force;
+    return {
+      x:x, y:y,
+      vx:Math.cos(angle) * vitesse,
+      vy:Math.sin(angle) * vitesse - Math.random() * 3.2,
+      r:Math.random() * Math.PI * 2,
+      vr:(Math.random() - 0.5) * 0.26,
+      t:String.fromCharCode(65 + Math.floor(Math.random() * 26)),
+      c:PALETTE[Math.floor(Math.random() * PALETTE.length)],
+      s:Math.random() * 17 + 11,
+      vie:1,
+      usure:Math.random() * 0.0042 + 0.0026
+    };
+  }
+
+  function eclate(x, y, n, force){
+    if (doux) return;
+    for (var i = 0; i < n; i++) particules.push(particule(x, y, force));
+    if (particules.length > 1400) particules.splice(0, particules.length - 1400);
+    boucle();
+  }
+
+  function etincelle(el){
+    var r = el.getBoundingClientRect();
+    if (doux) return;
+    for (var i = 0; i < 12; i++) particules.push(particule(r.left + r.width / 2, r.top + r.height / 2, 6));
+    boucle();
+  }
+
+  function feu(){
+    var x = L / 2, y = H * 0.42;
+    var lourd = L > 700;
+    eclate(x, y, lourd ? 130 : 80, 15);
+    setTimeout(function(){ eclate(x - L * 0.24, y - H * 0.10, lourd ? 90 : 55, 12); }, 340);
+    setTimeout(function(){ eclate(x + L * 0.24, y - H * 0.04, lourd ? 90 : 55, 12); }, 620);
+    setTimeout(function(){ eclate(x, y + H * 0.10, lourd ? 110 : 65, 13); }, 940);
+  }
+
+  var tourne = false;
+  function boucle(){
+    if (tourne) return;
+    tourne = true;
+    requestAnimationFrame(image);
+  }
+
+  function image(){
+    ctx.clearRect(0, 0, L, H);
+    for (var i = particules.length - 1; i >= 0; i--){
+      var p = particules[i];
+      p.vy += 0.14;
+      p.vx *= 0.992;
+      p.vy *= 0.992;
+      p.x += p.vx; p.y += p.vy; p.r += p.vr;
+      p.vie -= p.usure;
+      if (p.vie <= 0 || p.y > H + 90){ particules.splice(i, 1); continue; }
+
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.r);
+      ctx.globalAlpha = Math.max(0, Math.min(1, p.vie));
+      ctx.fillStyle = p.c;
+      ctx.font = "700 " + p.s + "px " + POLICE_MONO;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(p.t, 0, 0);
+      ctx.restore();
+    }
+    if (particules.length){ requestAnimationFrame(image); }
+    else { tourne = false; ctx.clearRect(0, 0, L, H); }
+  }
+
+  /* ================= 4. le poème se révèle au défilement ================= */
+  var blocs = document.querySelectorAll(".strophe, .envoi");
+  if ("IntersectionObserver" in window && !doux){
+    var oeil = new IntersectionObserver(function(entrees){
+      entrees.forEach(function(e){
+        if (e.isIntersecting){ e.target.classList.add("vu"); oeil.unobserve(e.target); }
+      });
+    }, { threshold:0.2, rootMargin:"0px 0px -8% 0px" });
+    Array.prototype.forEach.call(blocs, function(b){ oeil.observe(b); });
+  } else {
+    Array.prototype.forEach.call(blocs, function(b){ b.classList.add("vu"); });
+  }
+
+  /* ================= 5. lancements ================= */
+  if (!doux){
+    setTimeout(feu, 550);
+    document.addEventListener("click", function(e){
+      if (e.target.closest("#relance")) return;
+      eclate(e.clientX, e.clientY, 26, 9);
+    });
+  }
+  allume();
+
+  document.getElementById("relance").addEventListener("click", function(e){
+    e.stopPropagation();
+    if (doux) return;
+    var r = this.getBoundingClientRect();
+    eclate(r.left + r.width / 2, r.top + r.height / 2, 150, 15);
+  });
+})();
+</script>
+</body>
+</html>
