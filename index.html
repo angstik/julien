@@ -460,6 +460,7 @@
     if (doux) return;
     for (var i = 0; i < n; i++) particules.push(particule(x, y, force, coeur));
     if (particules.length > 1400) particules.splice(0, particules.length - 1400);
+    programme();
     boucle();
   }
 
@@ -535,30 +536,47 @@
     Array.prototype.forEach.call(blocs, function(b){ b.classList.add("vu"); });
   }
 
-  /* ================= 5. une pluie de coeurs sur l'article affiche ================= */
-  var visibles = [];
+  /* ================= 5. la pluie de coeurs ================= */
+  var auMilieu = null;      // derniere strophe passee au milieu de l'ecran
+  var dernier = 0;          // horodatage du dernier envoi de coeurs
+  var minuteur = null;
+
+  /* chaque strophe qui franchit le milieu de l'ecran declenche une gerbe */
   if ("IntersectionObserver" in window && !doux){
-    var veille = new IntersectionObserver(function(entrees){
+    var milieu = new IntersectionObserver(function(entrees){
       entrees.forEach(function(e){
-        var k = visibles.indexOf(e.target);
-        if (e.isIntersecting && k === -1) visibles.push(e.target);
-        else if (!e.isIntersecting && k !== -1) visibles.splice(k, 1);
+        if (!e.isIntersecting) return;
+        auMilieu = e.target;
+        coeursDe(e.target, true);
       });
-    }, { threshold:0.3 });
-    Array.prototype.forEach.call(blocs, function(b){ veille.observe(b); });
+    }, { rootMargin:"-50% 0px -50% 0px", threshold:0 });
+    Array.prototype.forEach.call(blocs, function(b){ milieu.observe(b); });
   }
 
-  function pluieDeCoeurs(){
-    if (doux || document.hidden || !visibles.length){ programme(); return; }
-    var el = visibles[Math.floor(Math.random() * visibles.length)];
+  function coeursDe(el, auCentre){
+    if (doux || !el) return;
+    var t = Date.now();
+    if (t - dernier < 1500) return;   // pas de rafale pendant un defilement rapide
+    dernier = t;
     var r = el.getBoundingClientRect();
-    if (r.bottom < 0 || r.top > H){ programme(); return; }
     var x = r.left + r.width * (0.28 + Math.random() * 0.44);
-    var y = Math.max(60, Math.min(H - 60, r.top + r.height * (0.3 + Math.random() * 0.4)));
+    var y = auCentre ? H / 2
+                     : Math.max(70, Math.min(H - 70, r.top + r.height * (0.3 + Math.random() * 0.4)));
     eclate(x, y, 26, 7, true);
+  }
+
+  /* a defaut d'evenement, une gerbe toutes les 10 a 15 s */
+  function pluieDeCoeurs(){
+    if (!doux && !document.hidden){
+      coeursDe(auMilieu || blocs[0], !!auMilieu);
+    }
     programme();
   }
-  function programme(){ setTimeout(pluieDeCoeurs, 30000 + Math.random() * 10000); }
+  function programme(){
+    if (doux) return;
+    clearTimeout(minuteur);
+    minuteur = setTimeout(pluieDeCoeurs, 10000 + Math.random() * 5000);
+  }
 
   /* ================= 6. lancements ================= */
   if (!doux){
@@ -570,6 +588,7 @@
   }
   allume();
   programme();
+  document.addEventListener("visibilitychange", function(){ if (!document.hidden) programme(); });
 
   document.getElementById("relance").addEventListener("click", function(e){
     e.stopPropagation();

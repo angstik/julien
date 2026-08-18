@@ -22,7 +22,11 @@ après un premier partage, ajouter `?v=2` à la fin du lien pour forcer le rafra
 
 - **Fichier unique.** Aucune dépendance, aucun script externe, aucune requête réseau : polices système uniquement, favicon en data-URI. La page fonctionne aussi hors ligne, ouverte directement depuis le disque.
 - **Explosion en lettres.** Les confettis sont les 26 lettres de l'alphabet, dessinées sur un `<canvas>` (gravité, frottement, rotation, usure). Quatre salves à l'ouverture, une mini-explosion à chaque clic, une grosse au bouton « Relancer l'explosion ».
-- **Pluie de cœurs.** Toutes les 30 à 40 secondes, une gerbe de 26 cœurs de couleurs différentes éclate sur l'une des strophes actuellement à l'écran (choisie au hasard parmi celles visibles). Les cœurs sont plus lents que les lettres : gravité réduite, oscillation latérale, durée de vie allongée. Rien ne se déclenche si l'onglet est en arrière-plan ou si aucune strophe n'est visible.
+- **Pluie de cœurs.** Gerbes de 26 cœurs de couleurs différentes, déclenchées de deux façons :
+  - *au défilement* — chaque strophe qui franchit le milieu de l'écran envoie sa gerbe, tirée à la hauteur du milieu (bande de détection `rootMargin:"-50% 0px -50% 0px"`, une gerbe maximum toutes les 1,5 s pour éviter les rafales) ;
+  - *à l'arrêt* — si rien ne s'est passé pendant 10 à 15 secondes, une gerbe part toute seule. Toute explosion, y compris un clic, repousse ce minuteur. Tant qu'aucune strophe n'a atteint le milieu, la gerbe part de la première strophe, en bas de l'écran.
+
+  Les cœurs sont plus lents que les lettres : gravité réduite, oscillation latérale, durée de vie allongée. Rien ne se déclenche quand l'onglet est en arrière-plan ; le minuteur redémarre au retour.
 - **Alphabet.** Les 26 lettres s'affichent sous le titre ; J, U, L, I, E et N s'allument une à une avec une gerbe d'étincelles.
 - **Poème.** Six strophes, chacune accrochée à un fait vérifiable sur 26, révélées au défilement via `IntersectionObserver` :
 
@@ -45,7 +49,7 @@ Tout est en haut du fichier.
 - Palette des confettis : constante `PALETTE` dans le script.
 - Lettres qui s'allument : constante `MOT` (`"JULIEN"`).
 - Densité des explosions : les nombres passés à `eclate(x, y, nombre, force, coeur)` dans `feu()`.
-- Fréquence de la pluie de cœurs : `setTimeout(pluieDeCoeurs, 30000 + Math.random() * 10000)` dans `programme()`.
+- Délai d'inactivité avant une gerbe : `setTimeout(pluieDeCoeurs, 10000 + Math.random() * 5000)` dans `programme()`.
 - Couleurs des cœurs : constante `COEURS`.
 - Couleur d'une strophe : attribut `style="--c:var(--rose)"` sur le `div.strophe`.
 
