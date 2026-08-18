@@ -4,10 +4,20 @@ Page HTML autonome : une explosion de lettres, puis un poème autour du chiffre 
 
 ## Mise en ligne (GitHub Pages)
 
-1. Placer `index.html` à la racine du dépôt.
+1. Placer `index.html` et `og.png` à la racine du dépôt (dépôt **public**).
 2. `Settings` → `Pages` → **Source** : *Deploy from a branch*.
 3. Branche `main`, dossier `/ (root)`, puis **Save**.
 4. La page est publiée sous `https://<utilisateur>.github.io/<depot>/` (compter une à deux minutes).
+
+## Aperçu de partage (Open Graph)
+
+`og.png` (1200 × 630) s'affiche quand le lien est envoyé sur WhatsApp, iMessage, Slack, LinkedIn, X…
+
+Les balises `og:url` et `og:image` de `index.html` doivent contenir une **URL absolue** : les
+aperçus ne fonctionnent pas avec un chemin relatif. Remplacer les deux occurrences de
+`https://UTILISATEUR.github.io/DEPOT/` par l'adresse réelle de la page, puis vérifier le rendu
+sur <https://www.opengraph.xyz/>. Les plateformes gardent l'aperçu en cache : en cas de
+correction après un premier partage, ajouter `?v=2` à la fin du lien pour forcer le rafraîchissement.
 
 ## Caractéristiques
 
