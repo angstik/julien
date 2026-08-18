@@ -21,12 +21,14 @@ après un premier partage, ajouter `?v=2` à la fin du lien pour forcer le rafra
 ## Caractéristiques
 
 - **Fichier unique.** Aucune dépendance, aucun script externe, aucune requête réseau : polices système uniquement, favicon en data-URI. La page fonctionne aussi hors ligne, ouverte directement depuis le disque.
-- **Explosion en lettres.** Les confettis sont les 26 lettres de l'alphabet, dessinées sur un `<canvas>` (gravité, frottement, rotation, usure). Quatre salves à l'ouverture, une mini-explosion à chaque clic, une grosse au bouton « Relancer l'explosion ».
-- **Pluie de cœurs.** Gerbes de 26 cœurs de couleurs différentes, déclenchées de deux façons :
-  - *au défilement* — chaque strophe qui franchit le milieu de l'écran envoie sa gerbe, tirée à la hauteur du milieu (bande de détection `rootMargin:"-50% 0px -50% 0px"`, une gerbe maximum toutes les 1,5 s pour éviter les rafales) ;
-  - *à l'arrêt* — si rien ne s'est passé pendant 10 à 15 secondes, une gerbe part toute seule. Toute explosion, y compris un clic, repousse ce minuteur. Tant qu'aucune strophe n'a atteint le milieu, la gerbe part de la première strophe, en bas de l'écran.
+- **Anneau JULIEN.** Au premier temps de l'explosion, les six lettres du prénom apparaissent une à une sur un cercle unique dont le rayon croît puis s'amortit — la coque d'une bombe de feu d'artifice. Elles restent toutes sur le même cercle, qui tourne lentement.
+- **Explosion en lettres.** Les confettis sont les 26 lettres de l'alphabet, dessinées sur un `<canvas>` (gravité, frottement, rotation, usure). Quatre salves à l'ouverture, une mini-explosion à chaque clic. Le bouton « Relancer l'explosion » ramène en haut de page et rejoue toute la séquence d'ouverture.
+- **Pluie de cœurs et d'étoiles.** Chaque gerbe envoie 26 cœurs de couleurs différentes et 26 étoiles dorées. Trois déclencheurs :
+  - *la première*, 6 secondes après la fin de l'explosion de lettres, part du bas de l'écran avec un élan vers le haut : on n'en voit que la cime, ce qui invite à faire défiler la page ;
+  - *au défilement*, chaque strophe qui franchit le milieu de l'écran envoie sa gerbe à hauteur du milieu (bande de détection `rootMargin:"-50% 0px -50% 0px"`, une gerbe maximum toutes les 1,5 s) ;
+  - *à l'arrêt*, si rien ne s'est passé pendant 10 à 15 secondes, une gerbe part toute seule. Toute explosion, y compris un clic, repousse ce minuteur.
 
-  Les cœurs sont plus lents que les lettres : gravité réduite, oscillation latérale, durée de vie allongée. Rien ne se déclenche quand l'onglet est en arrière-plan ; le minuteur redémarre au retour.
+  Cœurs et étoiles sont plus lents que les lettres : gravité réduite, oscillation latérale, durée de vie allongée. Rien ne se déclenche quand l'onglet est en arrière-plan ; le minuteur redémarre au retour.
 - **Alphabet.** Les 26 lettres s'affichent sous le titre ; J, U, L, I, E et N s'allument une à une avec une gerbe d'étincelles.
 - **Poème.** Six strophes, chacune accrochée à un fait vérifiable sur 26, révélées au défilement via `IntersectionObserver` :
 

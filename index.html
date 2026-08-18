@@ -376,25 +376,37 @@
 
   var doux = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var PALETTE = ["#FF3E6C","#FFC53D","#2EE6A8","#4CC9F0","#C77DFF","#FFF4E6"];
+  var COEURS  = ["#FF3E6C","#FFC53D","#2EE6A8","#4CC9F0","#C77DFF","#FF8FA3","#FFF4E6"];
+  var ORS     = ["#FFC53D","#FFE08A","#FFB000","#FFF0B8"];
   var MOT = "JULIEN";
   var POLICE_MONO = "ui-monospace, Menlo, Consolas, monospace";
-  var COEURS = ["#FF3E6C","#FFC53D","#2EE6A8","#4CC9F0","#C77DFF","#FF8FA3","#FFF4E6"];
-  var CHEMIN = (typeof Path2D !== "undefined")
-    ? new Path2D("M16 28.5 3.6 16.4C.4 13.2.2 8 3.2 4.9a8 8 0 0 1 11.5 0l1.3 1.3 1.3-1.3a8 8 0 0 1 11.5 0c3 3.1 2.8 8.3-.4 11.5L16 28.5Z")
-    : null;
 
-  /* ================= 1. le titre éclot lettre par lettre ================= */
+  /* ---- silhouettes (memes traces que le coeur du titre) ---- */
+  var CHEMIN = null, ETOILE = null;
+  if (typeof Path2D !== "undefined"){
+    CHEMIN = new Path2D("M16 28.5 3.6 16.4C.4 13.2.2 8 3.2 4.9a8 8 0 0 1 11.5 0l1.3 1.3 1.3-1.3a8 8 0 0 1 11.5 0c3 3.1 2.8 8.3-.4 11.5L16 28.5Z");
+    ETOILE = new Path2D();
+    for (var e = 0; e < 10; e++){
+      var ra = (e % 2 === 0) ? 16 : 6.6;
+      var an = -Math.PI / 2 + e * Math.PI / 5;
+      var px = 16 + Math.cos(an) * ra, py = 16 + Math.sin(an) * ra;
+      if (e === 0) ETOILE.moveTo(px, py); else ETOILE.lineTo(px, py);
+    }
+    ETOILE.closePath();
+  }
+
+  /* ================= 1. le titre eclot lettre par lettre ================= */
   var retard = 0.25;
   Array.prototype.forEach.call(document.querySelectorAll("[data-anim]"), function(ligne){
     var texte = ligne.textContent.trim();
     ligne.textContent = "";
     Array.prototype.forEach.call(texte, function(c){
-      var s = document.createElement("span");
-      s.className = "l";
-      s.textContent = (c === " ") ? "\u00A0" : c;
-      s.style.setProperty("--d", retard.toFixed(2) + "s");
-      s.style.setProperty("--r", ((Math.random() * 16) - 8).toFixed(1) + "deg");
-      ligne.appendChild(s);
+      var sp = document.createElement("span");
+      sp.className = "l";
+      sp.textContent = (c === " ") ? "\u00A0" : c;
+      sp.style.setProperty("--d", retard.toFixed(2) + "s");
+      sp.style.setProperty("--r", ((Math.random() * 16) - 8).toFixed(1) + "deg");
+      ligne.appendChild(sp);
       retard += 0.055;
     });
     retard += 0.12;
@@ -404,22 +416,25 @@
   var bac = document.getElementById("alphabet");
   var cases = [];
   for (var i = 0; i < 26; i++){
-    var sp = document.createElement("span");
-    sp.textContent = String.fromCharCode(65 + i);
-    bac.appendChild(sp);
-    cases.push(sp);
+    var c = document.createElement("span");
+    c.textContent = String.fromCharCode(65 + i);
+    bac.appendChild(c);
+    cases.push(c);
   }
+  var attentes = [];
   function allume(){
+    attentes.forEach(clearTimeout);
+    attentes = [];
+    cases.forEach(function(el){ el.classList.remove("on"); });
     Array.prototype.forEach.call(MOT, function(lettre, k){
-      var index = lettre.charCodeAt(0) - 65;
-      setTimeout(function(){
-        cases[index].classList.add("on");
-        if (!doux){ etincelle(cases[index]); }
-      }, 2300 + k * 190);
+      attentes.push(setTimeout(function(){
+        cases[lettre.charCodeAt(0) - 65].classList.add("on");
+        if (!doux) etincelle(cases[lettre.charCodeAt(0) - 65]);
+      }, 2300 + k * 190));
     });
   }
 
-  /* ================= 3. l'explosion : les 26 lettres qui volent ================= */
+  /* ================= 3. le canevas ================= */
   var canvas = document.getElementById("confettis");
   var ctx = canvas.getContext("2d");
   var particules = [];
@@ -435,39 +450,63 @@
   dimensionne();
   window.addEventListener("resize", dimensionne);
 
-  function particule(x, y, force, coeur){
+  function particule(x, y, force, type, elan){
     var angle = Math.random() * Math.PI * 2;
     var vitesse = (Math.random() * 0.75 + 0.35) * force;
-    var jeu = coeur && CHEMIN;
+    var lent = (type === "coeur" || type === "etoile");
+    var vy = Math.sin(angle) * vitesse - Math.random() * (lent ? 1.6 : 3.2);
+    if (elan) vy = -elan - Math.random() * 2.2 - Math.abs(Math.sin(angle) * vitesse) * 0.4;
     return {
-      coeur:!!jeu,
+      type:type || "lettre",
       x:x, y:y,
       vx:Math.cos(angle) * vitesse,
-      vy:Math.sin(angle) * vitesse - Math.random() * (jeu ? 1.6 : 3.2),
-      r:jeu ? (Math.random() - 0.5) * 0.7 : Math.random() * Math.PI * 2,
-      vr:(Math.random() - 0.5) * (jeu ? 0.06 : 0.26),
+      vy:vy,
+      r:lent ? (Math.random() - 0.5) * 0.7 : Math.random() * Math.PI * 2,
+      vr:(Math.random() - 0.5) * (lent ? 0.06 : 0.26),
       t:String.fromCharCode(65 + Math.floor(Math.random() * 26)),
-      c:(jeu ? COEURS : PALETTE)[Math.floor(Math.random() * (jeu ? COEURS : PALETTE).length)],
-      s:jeu ? Math.random() * 20 + 14 : Math.random() * 17 + 11,
+      c:(type === "coeur" ? COEURS : type === "etoile" ? ORS : PALETTE)[
+          Math.floor(Math.random() * (type === "coeur" ? COEURS.length : type === "etoile" ? ORS.length : PALETTE.length))],
+      s:lent ? Math.random() * 20 + 14 : Math.random() * 17 + 11,
       age:Math.random() * 60,
       ph:Math.random() * 6.28,
       vie:1,
-      usure:jeu ? Math.random() * 0.0022 + 0.0016 : Math.random() * 0.0042 + 0.0026
+      usure:lent ? Math.random() * 0.0022 + 0.0016 : Math.random() * 0.0042 + 0.0026
     };
   }
 
-  function eclate(x, y, n, force, coeur){
+  function eclate(x, y, n, force, type, elan){
     if (doux) return;
-    for (var i = 0; i < n; i++) particules.push(particule(x, y, force, coeur));
-    if (particules.length > 1400) particules.splice(0, particules.length - 1400);
+    for (var i = 0; i < n; i++) particules.push(particule(x, y, force, type, elan));
+    if (particules.length > 1800) particules.splice(0, particules.length - 1800);
     programme();
     boucle();
   }
 
-  function etincelle(el){
-    var r = el.getBoundingClientRect();
+  /* 26 coeurs + 26 etoiles dorees */
+  function gerbe(x, y, elan){
     if (doux) return;
+    eclate(x, y, 26, elan ? 5 : 7, "coeur", elan);
+    eclate(x, y, 26, elan ? 5 : 7, "etoile", elan);
+  }
+
+  function etincelle(el){
+    if (doux) return;
+    var r = el.getBoundingClientRect();
     for (var i = 0; i < 12; i++) particules.push(particule(r.left + r.width / 2, r.top + r.height / 2, 6));
+    boucle();
+  }
+
+  /* ---- J U L I E N sur un cercle qui grandit ---- */
+  function anneau(x, y){
+    if (doux) return;
+    particules.push({
+      type:"anneau",
+      cx:x, cy:y,
+      rayon:0,
+      vr:Math.max(4.5, Math.min(16, L * 0.012)),
+      taille:Math.max(22, Math.min(48, L * 0.036)),
+      t:0, vie:1
+    });
     boucle();
   }
 
@@ -475,6 +514,7 @@
     var x = L / 2, y = H * 0.42;
     var lourd = L > 700;
     eclate(x, y, lourd ? 130 : 80, 15);
+    anneau(x, y);
     setTimeout(function(){ eclate(x - L * 0.24, y - H * 0.10, lourd ? 90 : 55, 12); }, 340);
     setTimeout(function(){ eclate(x + L * 0.24, y - H * 0.04, lourd ? 90 : 55, 12); }, 620);
     setTimeout(function(){ eclate(x, y + H * 0.10, lourd ? 110 : 65, 13); }, 940);
@@ -491,26 +531,53 @@
     ctx.clearRect(0, 0, L, H);
     for (var i = particules.length - 1; i >= 0; i--){
       var p = particules[i];
+
+      if (p.type === "anneau"){
+        p.t++;
+        p.rayon += p.vr;
+        p.vr *= 0.955;
+        if (p.t > 55) p.vie -= 0.012;
+        if (p.vie <= 0){ particules.splice(i, 1); continue; }
+        ctx.save();
+        ctx.font = "700 " + p.taille + "px " + POLICE_MONO;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        for (var k = 0; k < MOT.length; k++){
+          var depart = k * 7;
+          if (p.t < depart) continue;
+          var arrivee = Math.min(1, (p.t - depart) / 9);
+          var a = -Math.PI / 2 + k * Math.PI / 3 + p.t * 0.004;
+          ctx.globalAlpha = Math.max(0, arrivee * p.vie);
+          ctx.fillStyle = COEURS[k % COEURS.length];
+          ctx.fillText(MOT.charAt(k),
+                       p.cx + Math.cos(a) * p.rayon,
+                       p.cy + Math.sin(a) * p.rayon);
+        }
+        ctx.restore();
+        continue;
+      }
+
+      var lent = (p.type === "coeur" || p.type === "etoile");
       p.age++;
-      p.vy += p.coeur ? 0.045 : 0.14;
-      p.vx *= p.coeur ? 0.985 : 0.992;
-      p.vy *= p.coeur ? 0.985 : 0.992;
-      p.x += p.vx + (p.coeur ? Math.sin(p.age * 0.045 + p.ph) * 0.55 : 0);
+      p.vy += lent ? 0.045 : 0.14;
+      p.vx *= lent ? 0.985 : 0.992;
+      p.vy *= lent ? 0.985 : 0.992;
+      p.x += p.vx + (lent ? Math.sin(p.age * 0.045 + p.ph) * 0.55 : 0);
       p.y += p.vy;
       p.r += p.vr;
       p.vie -= p.usure;
-      if (p.vie <= 0 || p.y > H + 90){ particules.splice(i, 1); continue; }
+      if (p.vie <= 0 || p.y > H + 140){ particules.splice(i, 1); continue; }
 
       ctx.save();
       ctx.translate(p.x, p.y);
       ctx.rotate(p.r);
       ctx.globalAlpha = Math.max(0, Math.min(1, p.vie));
       ctx.fillStyle = p.c;
-      if (p.coeur){
-        var k = p.s / 32;
-        ctx.scale(k, k);
+      if (lent && CHEMIN){
+        var e = p.s / 32;
+        ctx.scale(e, e);
         ctx.translate(-16, -15);
-        ctx.fill(CHEMIN);
+        ctx.fill(p.type === "coeur" ? CHEMIN : ETOILE);
       } else {
         ctx.font = "700 " + p.s + "px " + POLICE_MONO;
         ctx.textAlign = "center";
@@ -523,7 +590,7 @@
     else { tourne = false; ctx.clearRect(0, 0, L, H); }
   }
 
-  /* ================= 4. le poème se révèle au défilement ================= */
+  /* ================= 4. le poeme se revele au defilement ================= */
   var blocs = document.querySelectorAll(".strophe, .envoi");
   if ("IntersectionObserver" in window && !doux){
     var oeil = new IntersectionObserver(function(entrees){
@@ -536,24 +603,23 @@
     Array.prototype.forEach.call(blocs, function(b){ b.classList.add("vu"); });
   }
 
-  /* ================= 5. la pluie de coeurs ================= */
-  var auMilieu = null;      // derniere strophe passee au milieu de l'ecran
-  var dernier = 0;          // horodatage du dernier envoi de coeurs
+  /* ================= 5. coeurs et etoiles ================= */
+  var auMilieu = null;   // derniere strophe passee au milieu de l'ecran
+  var dernier = 0;       // horodatage de la derniere gerbe
   var minuteur = null;
 
-  /* chaque strophe qui franchit le milieu de l'ecran declenche une gerbe */
   if ("IntersectionObserver" in window && !doux){
     var milieu = new IntersectionObserver(function(entrees){
       entrees.forEach(function(e){
         if (!e.isIntersecting) return;
         auMilieu = e.target;
-        coeursDe(e.target, true);
+        gerbeSur(e.target, true);
       });
     }, { rootMargin:"-50% 0px -50% 0px", threshold:0 });
     Array.prototype.forEach.call(blocs, function(b){ milieu.observe(b); });
   }
 
-  function coeursDe(el, auCentre){
+  function gerbeSur(el, auCentre){
     if (doux || !el) return;
     var t = Date.now();
     if (t - dernier < 1500) return;   // pas de rafale pendant un defilement rapide
@@ -562,39 +628,55 @@
     var x = r.left + r.width * (0.28 + Math.random() * 0.44);
     var y = auCentre ? H / 2
                      : Math.max(70, Math.min(H - 70, r.top + r.height * (0.3 + Math.random() * 0.4)));
-    eclate(x, y, 26, 7, true);
+    gerbe(x, y, 0);
   }
 
-  /* a defaut d'evenement, une gerbe toutes les 10 a 15 s */
-  function pluieDeCoeurs(){
-    if (!doux && !document.hidden){
-      coeursDe(auMilieu || blocs[0], !!auMilieu);
-    }
+  /* la toute premiere gerbe monte du bas de l'ecran : on n'en voit que le haut */
+  function gerbeDuBas(){
+    if (doux || document.hidden) return;
+    dernier = Date.now();
+    gerbe(L / 2 + (Math.random() - 0.5) * L * 0.3, H + 40, 3.4);
+  }
+
+  function pluie(){
+    if (!doux && !document.hidden){ gerbeSur(auMilieu || blocs[0], !!auMilieu); }
     programme();
   }
   function programme(){
     if (doux) return;
     clearTimeout(minuteur);
-    minuteur = setTimeout(pluieDeCoeurs, 10000 + Math.random() * 5000);
+    minuteur = setTimeout(pluie, 10000 + Math.random() * 5000);
   }
 
   /* ================= 6. lancements ================= */
+  var horloges = [];
+  function ouverture(){
+    horloges.forEach(clearTimeout);
+    horloges = [];
+    if (!doux){
+      horloges.push(setTimeout(feu, 550));
+      horloges.push(setTimeout(gerbeDuBas, 9000));  // 6 s apres la fin des lettres
+    }
+    allume();
+  }
+  ouverture();
+
   if (!doux){
-    setTimeout(feu, 550);
     document.addEventListener("click", function(e){
       if (e.target.closest("#relance")) return;
       eclate(e.clientX, e.clientY, 26, 9);
     });
+    document.addEventListener("visibilitychange", function(){ if (!document.hidden) programme(); });
   }
-  allume();
-  programme();
-  document.addEventListener("visibilitychange", function(){ if (!document.hidden) programme(); });
 
   document.getElementById("relance").addEventListener("click", function(e){
     e.stopPropagation();
-    if (doux) return;
-    var r = this.getBoundingClientRect();
-    eclate(r.left + r.width / 2, r.top + r.height / 2, 150, 15);
+    if (doux){ window.scrollTo(0, 0); return; }
+    particules.length = 0;
+    auMilieu = null;
+    dernier = 0;
+    window.scrollTo({ top:0, behavior:"smooth" });
+    setTimeout(ouverture, 650);
   });
 })();
 </script>
