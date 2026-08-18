@@ -266,7 +266,7 @@
     <p class="eyebrow">26 ans — jour 1</p>
 
     <h1 class="titre">
-      <span class="ligne petite" data-anim>bon anniversaire</span>
+      <span class="ligne petite" data-anim>BON ANNIVERSAIRE</span>
       <span class="ligne" data-anim>Julien</span>
       <svg class="coeur" viewBox="0 0 32 29" role="img" aria-label="cœur" focusable="false">
         <path fill="currentColor" d="M16 28.5 3.6 16.4C.4 13.2.2 8 3.2 4.9a8 8 0 0 1 11.5 0l1.3 1.3 1.3-1.3a8 8 0 0 1 11.5 0c3 3.1 2.8 8.3-.4 11.5L16 28.5Z"/>
@@ -541,15 +541,17 @@
 
       if (p.type === "anneau"){
         p.t++;
-        p.rayon += (p.cible - p.rayon) * 0.02 + 0.25;  // montee lente, puis lente derive : l'arc n'arrete jamais de s'etendre
-        if (p.t > 100) p.vie -= 0.0033;                // fondu progressif sur 5 s
+        p.rayon += (p.cible - p.rayon) * 0.02 + 0.12;  // montee lente, puis lente derive : l'arc n'arrete jamais de s'etendre
+        p.rayon = Math.min(p.rayon, p.cy - p.taille * 0.72);
+        if (p.t > 100) p.vie -= 0.0028;                // fondu progressif sur 6 s
         if (p.vie <= 0){ particules.splice(i, 1); continue; }
         var demi = p.arc / 2;
         for (var k = 0; k < MOT.length; k++){
           var depart = k * 7;
           if (p.t < depart) continue;
           var arrivee = Math.min(1, (p.t - depart) / 10);
-          var opacite = Math.max(0, arrivee * p.vie);
+          var v = Math.max(0, Math.min(1, p.vie));
+          var opacite = Math.max(0, arrivee * v * v * (3 - 2 * v));   // fondu en S : plus d'extinction brutale
           var a = -Math.PI / 2 - demi + (k / (MOT.length - 1)) * p.arc;   // angle fige : chaque lettre reste sur son rayon
           ctx.save();
           ctx.translate(p.cx + Math.cos(a) * p.rayon, p.cy + Math.sin(a) * p.rayon);
@@ -563,7 +565,7 @@
           ctx.strokeStyle = "rgba(20,7,31,.8)";
           ctx.strokeText(MOT.charAt(k), 0, 0);
           ctx.shadowColor = "rgba(255,244,230,.9)";
-          ctx.shadowBlur = p.taille * (0.4 + 0.18 * Math.sin(p.t * 0.11 + k));
+          ctx.shadowBlur = p.taille * (0.4 + 0.18 * Math.sin(p.t * 0.11 + k)) * opacite;
           ctx.fillStyle = "#FFF4E6";
           ctx.fillText(MOT.charAt(k), 0, 0);
           ctx.shadowBlur = 0;
