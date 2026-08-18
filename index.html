@@ -85,6 +85,7 @@
     font-size:clamp(46px,13vw,170px);
   }
   .titre .ligne{ display:block; }
+  .titre .ligne:not(.petite){ font-weight:400; letter-spacing:0; }
   .titre .ligne.petite{
     font-size:.5em; font-weight:700; letter-spacing:.04em;
     color:var(--jaune); margin-bottom:.35em;
@@ -543,7 +544,7 @@
         p.t++;
         p.rayon += (p.cible - p.rayon) * 0.02 + 0.12;  // montee lente, puis lente derive : l'arc n'arrete jamais de s'etendre
         p.rayon = Math.min(p.rayon, p.cy - p.taille * 0.72);
-        if (p.t > 100) p.vie -= 0.0028;                // fondu progressif sur 6 s
+        if (p.t > 60) p.vie -= 0.0026;                 // le fondu demarre tot et dure ~6,5 s
         if (p.vie <= 0){ particules.splice(i, 1); continue; }
         var demi = p.arc / 2;
         for (var k = 0; k < MOT.length; k++){
@@ -551,7 +552,7 @@
           if (p.t < depart) continue;
           var arrivee = Math.min(1, (p.t - depart) / 10);
           var v = Math.max(0, Math.min(1, p.vie));
-          var opacite = Math.max(0, arrivee * v * v * (3 - 2 * v));   // fondu en S : plus d'extinction brutale
+          var opacite = Math.max(0, arrivee * Math.pow(v, 2.5));   // courbe concave : la transparence se voit des le debut
           var a = -Math.PI / 2 - demi + (k / (MOT.length - 1)) * p.arc;   // angle fige : chaque lettre reste sur son rayon
           ctx.save();
           ctx.translate(p.cx + Math.cos(a) * p.rayon, p.cy + Math.sin(a) * p.rayon);
@@ -562,7 +563,7 @@
           ctx.textBaseline = "middle";
           ctx.lineWidth = Math.max(3, p.taille * 0.09);
           ctx.lineJoin = "round";
-          ctx.strokeStyle = "rgba(20,7,31,.8)";
+          ctx.strokeStyle = "rgba(20,7,31," + (0.8 * opacite).toFixed(3) + ")";
           ctx.strokeText(MOT.charAt(k), 0, 0);
           ctx.shadowColor = "rgba(255,244,230,.9)";
           ctx.shadowBlur = p.taille * (0.4 + 0.18 * Math.sin(p.t * 0.11 + k)) * opacite;
