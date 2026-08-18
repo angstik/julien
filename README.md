@@ -21,7 +21,7 @@ après un premier partage, ajouter `?v=2` à la fin du lien pour forcer le rafra
 ## Caractéristiques
 
 - **Fichier unique.** Aucune dépendance, aucun script externe, aucune requête réseau : polices système uniquement, favicon en data-URI. La page fonctionne aussi hors ligne, ouverte directement depuis le disque.
-- **Anneau JULIEN.** Au premier temps de l'explosion, les six lettres du prénom apparaissent une à une sur un cercle unique dont le rayon croît puis s'amortit — la coque d'une bombe de feu d'artifice. Elles restent toutes sur le même cercle, qui tourne lentement.
+- **Anneau JULIEN.** Au premier temps de l'explosion, les six lettres du prénom apparaissent une à une sur un cercle unique dont le rayon croît puis s'amortit — la coque d'une bombe de feu d'artifice. Aucune gravité : elles restent sur le cercle, qui tourne lentement. Lettres surdimensionnées (jusqu'à 104 px), graisse 900, halo coloré et contour sombre pour rester lisibles par-dessus les confettis ; elles tiennent environ 3,5 s à pleine opacité, bien après la retombée des lettres, puis s'effacent en fondu.
 - **Explosion en lettres.** Les confettis sont les 26 lettres de l'alphabet, dessinées sur un `<canvas>` (gravité, frottement, rotation, usure). Quatre salves à l'ouverture, une mini-explosion à chaque clic. Le bouton « Relancer l'explosion » ramène en haut de page et rejoue toute la séquence d'ouverture.
 - **Pluie de cœurs et d'étoiles.** Chaque gerbe envoie 26 cœurs de couleurs différentes et 26 étoiles dorées. Trois déclencheurs :
   - *la première*, 6 secondes après la fin de l'explosion de lettres, part du bas de l'écran avec un élan vers le haut : on n'en voit que la cime, ce qui invite à faire défiler la page ;

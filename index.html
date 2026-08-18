@@ -378,6 +378,7 @@
   var PALETTE = ["#FF3E6C","#FFC53D","#2EE6A8","#4CC9F0","#C77DFF","#FFF4E6"];
   var COEURS  = ["#FF3E6C","#FFC53D","#2EE6A8","#4CC9F0","#C77DFF","#FF8FA3","#FFF4E6"];
   var ORS     = ["#FFC53D","#FFE08A","#FFB000","#FFF0B8"];
+  var ANNEAU  = ["#FFC53D","#FF3E6C","#2EE6A8","#4CC9F0","#C77DFF","#FFF4E6"];
   var MOT = "JULIEN";
   var POLICE_MONO = "ui-monospace, Menlo, Consolas, monospace";
 
@@ -499,12 +500,13 @@
   /* ---- J U L I E N sur un cercle qui grandit ---- */
   function anneau(x, y){
     if (doux) return;
+    var taille = Math.max(40, Math.min(104, L * 0.075));
     particules.push({
       type:"anneau",
       cx:x, cy:y,
       rayon:0,
-      vr:Math.max(4.5, Math.min(16, L * 0.012)),
-      taille:Math.max(22, Math.min(48, L * 0.036)),
+      cible:Math.max(taille * 1.7, Math.min(L, H) * 0.29),
+      taille:taille,
       t:0, vie:1
     });
     boucle();
@@ -513,8 +515,8 @@
   function feu(){
     var x = L / 2, y = H * 0.42;
     var lourd = L > 700;
-    eclate(x, y, lourd ? 130 : 80, 15);
     anneau(x, y);
+    eclate(x, y, lourd ? 130 : 80, 15);
     setTimeout(function(){ eclate(x - L * 0.24, y - H * 0.10, lourd ? 90 : 55, 12); }, 340);
     setTimeout(function(){ eclate(x + L * 0.24, y - H * 0.04, lourd ? 90 : 55, 12); }, 620);
     setTimeout(function(){ eclate(x, y + H * 0.10, lourd ? 110 : 65, 13); }, 940);
@@ -534,24 +536,30 @@
 
       if (p.type === "anneau"){
         p.t++;
-        p.rayon += p.vr;
-        p.vr *= 0.955;
-        if (p.t > 55) p.vie -= 0.012;
+        p.rayon += (p.cible - p.rayon) * 0.085;   // expansion amortie, aucune gravite
+        if (p.t > 210) p.vie -= 0.0075;           // persiste, puis s'efface en douceur
         if (p.vie <= 0){ particules.splice(i, 1); continue; }
         ctx.save();
-        ctx.font = "700 " + p.taille + "px " + POLICE_MONO;
+        ctx.font = "900 " + p.taille + "px " + POLICE_MONO;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
+        ctx.lineWidth = Math.max(3, p.taille * 0.09);
+        ctx.lineJoin = "round";
+        ctx.strokeStyle = "rgba(20,7,31,.85)";
         for (var k = 0; k < MOT.length; k++){
-          var depart = k * 7;
+          var depart = k * 6;
           if (p.t < depart) continue;
-          var arrivee = Math.min(1, (p.t - depart) / 9);
-          var a = -Math.PI / 2 + k * Math.PI / 3 + p.t * 0.004;
+          var arrivee = Math.min(1, (p.t - depart) / 8);
+          var a = -Math.PI / 2 + k * Math.PI / 3 + p.t * 0.0022;
+          var lx = p.cx + Math.cos(a) * p.rayon;
+          var ly = p.cy + Math.sin(a) * p.rayon;
           ctx.globalAlpha = Math.max(0, arrivee * p.vie);
-          ctx.fillStyle = COEURS[k % COEURS.length];
-          ctx.fillText(MOT.charAt(k),
-                       p.cx + Math.cos(a) * p.rayon,
-                       p.cy + Math.sin(a) * p.rayon);
+          ctx.strokeText(MOT.charAt(k), lx, ly);
+          ctx.shadowColor = ANNEAU[k];
+          ctx.shadowBlur = p.taille * 0.55;
+          ctx.fillStyle = ANNEAU[k];
+          ctx.fillText(MOT.charAt(k), lx, ly);
+          ctx.shadowBlur = 0;
         }
         ctx.restore();
         continue;
