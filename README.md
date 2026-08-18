@@ -22,6 +22,7 @@ après un premier partage, ajouter `?v=2` à la fin du lien pour forcer le rafra
 
 - **Fichier unique.** Aucune dépendance, aucun script externe, aucune requête réseau : polices système uniquement, favicon en data-URI. La page fonctionne aussi hors ligne, ouverte directement depuis le disque.
 - **Explosion en lettres.** Les confettis sont les 26 lettres de l'alphabet, dessinées sur un `<canvas>` (gravité, frottement, rotation, usure). Quatre salves à l'ouverture, une mini-explosion à chaque clic, une grosse au bouton « Relancer l'explosion ».
+- **Pluie de cœurs.** Toutes les 30 à 40 secondes, une gerbe de 26 cœurs de couleurs différentes éclate sur l'une des strophes actuellement à l'écran (choisie au hasard parmi celles visibles). Les cœurs sont plus lents que les lettres : gravité réduite, oscillation latérale, durée de vie allongée. Rien ne se déclenche si l'onglet est en arrière-plan ou si aucune strophe n'est visible.
 - **Alphabet.** Les 26 lettres s'affichent sous le titre ; J, U, L, I, E et N s'allument une à une avec une gerbe d'étincelles.
 - **Poème.** Six strophes, chacune accrochée à un fait vérifiable sur 26, révélées au défilement via `IntersectionObserver` :
 
@@ -43,7 +44,9 @@ Tout est en haut du fichier.
 - Couleurs : variables CSS `--nuit`, `--rose`, `--jaune`, `--menthe`, `--ciel`, `--violet` dans `:root`.
 - Palette des confettis : constante `PALETTE` dans le script.
 - Lettres qui s'allument : constante `MOT` (`"JULIEN"`).
-- Densité des explosions : les nombres passés à `eclate(x, y, nombre, force)` dans `feu()`.
+- Densité des explosions : les nombres passés à `eclate(x, y, nombre, force, coeur)` dans `feu()`.
+- Fréquence de la pluie de cœurs : `setTimeout(pluieDeCoeurs, 30000 + Math.random() * 10000)` dans `programme()`.
+- Couleurs des cœurs : constante `COEURS`.
 - Couleur d'une strophe : attribut `style="--c:var(--rose)"` sur le `div.strophe`.
 
 ## Licence
