@@ -503,12 +503,12 @@
   /* ---- J U L I E N sur un cercle qui grandit ---- */
   function anneau(x, y){
     if (doux) return;
-    var cible = Math.min(L * 0.44, y * 0.76);
-    var taille = Math.max(26, Math.min(104, cible / 2.6, L * 0.11));
+    var taille = Math.max(26, Math.min(104, L * 0.11, y * 0.30));
+    var cible = Math.max(taille * 2.6, Math.min(L * 0.46, y - taille * 0.9));
     particules.push({
       type:"anneau",
       cx:x, cy:y,
-      rayon:cible * 0.12,
+      rayon:cible * 0.1,
       cible:cible,
       taille:taille,
       arc:1.95,              // ~112 degres : JULIEN se lit de gauche a droite
@@ -541,8 +541,8 @@
 
       if (p.type === "anneau"){
         p.t++;
-        p.rayon += (p.cible - p.rayon) * 0.065;   // le rayon grandit, aucune gravite
-        if (p.t > 210) p.vie -= 0.0075;           // persiste, puis s'efface en douceur
+        p.rayon += (p.cible - p.rayon) * 0.02 + 0.25;  // montee lente, puis lente derive : l'arc n'arrete jamais de s'etendre
+        if (p.t > 100) p.vie -= 0.0033;                // fondu progressif sur 5 s
         if (p.vie <= 0){ particules.splice(i, 1); continue; }
         var demi = p.arc / 2;
         for (var k = 0; k < MOT.length; k++){
